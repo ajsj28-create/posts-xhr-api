@@ -5,6 +5,8 @@ const userIdControl = document.getElementById('userId');
 const titleControl = document.getElementById('title');
 const bodyControl = document.getElementById('body');
 const display = document.getElementById('display');
+const addBtn = document.getElementById('addBtn');
+const updateBtn = document.getElementById('updateBtn');
 
 let base_url = `https://jsonplaceholder.typicode.com`;
 let postsData_url = `${base_url}/posts`;
@@ -23,8 +25,8 @@ const templating = (arr) => {
                     </div>
                     <div class="card-footer color-dark d-flex justify-content-between align-items-center">
                         <div class="button-group">
-							<button class="btn btn-primary mr-2">Edit</button>
-                            <button class="btn btn-danger">Remove</button>
+							<button onclick="onEdit(this)" class="btn btn-primary mr-2">Edit</button>
+                            <button onclick="onRemove(this)" class="btn btn-danger">Remove</button>
 						</div>
 						<span>by User ${obj.userId}</span>
                     </div>
@@ -47,8 +49,8 @@ const showNewPost = (obj) => {
                     </div>
                     <div class="card-footer color-dark d-flex justify-content-between align-items-center">
                         <div class="button-group">
-							<button class="btn btn-primary mr-2">Edit</button>
-                            <button class="btn btn-danger">Remove</button>
+							<button onclick="onEdit(this)" class="btn btn-primary mr-2">Edit</button>
+                            <button onclick="onRemove(this)" class="btn btn-danger">Remove</button>
 						</div>
 						<span>by User ${obj.userId}</span>
                     </div>
@@ -59,6 +61,16 @@ const showNewPost = (obj) => {
     localStorage.removeItem('newId')
     
     display.prepend(newCol)
+    postsForm.reset()
+};
+
+const patch = (obj) => {
+    userIdControl.value = obj.userId
+    titleControl.value = obj.title
+    bodyControl.value = obj.body
+
+    addBtn.classList.add('d-none')
+    updateBtn.classList.remove('d-none')
 };
 
 const fetchPosts = () => { // GET method
@@ -109,4 +121,75 @@ const onPostAdd = (eve) => {
     }
 };
 
+const onEdit = (ele) => {
+    let editId = ele.closest('.col-md-4').id
+    localStorage.setItem('editId', editId)
+
+    // GET method
+    let xhr = new XMLHttpRequest()
+
+    xhr.open('GET', `${postsData_url}/${editId}`, true)
+
+    xhr.send(null)
+
+    xhr.onload = () => {
+        if(xhr.status >= 200 && xhr.status <= 299){
+            let editPost = JSON.parse(xhr.response)
+            patch(editPost)
+        }else{
+            console.error(`Something went wrong...`)
+        }
+    }    
+};
+
+const onPostUpdate = () => {
+    let updateId = localStorage.getItem('editId')
+    localStorage.removeItem('editId')
+
+    let updatedPost = {
+        userId: userIdControl.value,
+        title: titleControl.value,
+        body: bodyControl.value,
+        id: updateId
+    }
+
+    // PUT method
+
+    let xhr = new XMLHttpRequest()
+
+    xhr.open('PATCH', `${postsData_url}/${updateId}`, true)
+
+    xhr.send(JSON.stringify(updatedPost))
+
+    xhr.onload = () => {
+        if(xhr.status >= 200 && xhr.status <= 299){
+            // let newId = JSON.parse(xhr.response).id
+            // localStorage.setItem('newId', newId)
+            // showNewPost(newPost)
+            cl(xhr.response)
+            showUpdatedPost()
+        }else{
+            console.error(`Something went wrong...`)
+        }
+    }    
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 postsForm.addEventListener('submit', onPostAdd);
+updateBtn.addEventListener('click', onPostUpdate);
