@@ -105,19 +105,18 @@ const patch = (obj) => {
 
 const showUpdatedPost = (obj) => {
     if(document.getElementById(obj.id) == null){
-        postsForm.reset()
         snackBar(`Post not found...`, `error`)
     }else{
         let children = document.getElementById(obj.id).firstElementChild.children
         children[0].innerHTML = `<h4 class="m-0">${obj.title}</h4>`
         children[1].innerHTML = `<p class="m-0">${obj.body}</p>`
         children[2].lastElementChild.innerHTML = `User ${obj.userId}`
-    
-        postsForm.reset()
-        addBtn.classList.remove('d-none')
-        updateBtn.classList.add('d-none')
         snackBar(`Post updated Successfully!!!`, `success`)
     }
+
+    postsForm.reset()
+    addBtn.classList.remove('d-none')
+    updateBtn.classList.add('d-none')
 };
 
 const fetchPosts = () => {
