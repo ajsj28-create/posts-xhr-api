@@ -104,15 +104,20 @@ const patch = (obj) => {
 };
 
 const showUpdatedPost = (obj) => {
-    let children = document.getElementById(obj.id).firstElementChild.children
-    children[0].innerHTML = `<h4 class="m-0">${obj.title}</h4>`
-    children[1].innerHTML = `<p class="m-0">${obj.body}</p>`
-    children[2].lastElementChild.innerHTML = `User ${obj.userId}`
-
-    postsForm.reset()
-    addBtn.classList.remove('d-none')
-    updateBtn.classList.add('d-none')
-    snackBar(`Post updated Successfully!!!`, `success`)
+    if(document.getElementById(obj.id) == null){
+        postsForm.reset()
+        snackBar(`Post not found...`, `error`)
+    }else{
+        let children = document.getElementById(obj.id).firstElementChild.children
+        children[0].innerHTML = `<h4 class="m-0">${obj.title}</h4>`
+        children[1].innerHTML = `<p class="m-0">${obj.body}</p>`
+        children[2].lastElementChild.innerHTML = `User ${obj.userId}`
+    
+        postsForm.reset()
+        addBtn.classList.remove('d-none')
+        updateBtn.classList.add('d-none')
+        snackBar(`Post updated Successfully!!!`, `success`)
+    }
 };
 
 const fetchPosts = () => {
@@ -192,32 +197,36 @@ const onEdit = (ele) => {
 
 const onPostUpdate = () => {
     showLoader()
-    let updateId = localStorage.getItem('editId')
-    localStorage.removeItem('editId')
-    let update_url = `${postsData_url}/${updateId}`
-
-    let updatedPost = {
-        userId: userIdControl.value,
-        title: titleControl.value,
-        body: bodyControl.value,
-        id: updateId
-    }
-
-    let xhr = makeAPIcall('PATCH', update_url, updatedPost)
-
-    xhr.onload = () => {
-        if(xhr.status >= 200 && xhr.status <= 299){
-            // let updatedPost = JSON.parse(xhr.response)
-            showUpdatedPost(updatedPost)
-        }else{
-            let msg = `Something went wrong while updating post...`
-            console.error(msg)
-            snackBar(msg, `error`)
-        }
-    }
+    if(titleControl.value && bodyControl.value){
+        let updateId = localStorage.getItem('editId')
+        localStorage.removeItem('editId')
+        let update_url = `${postsData_url}/${updateId}`
     
-    xhr.onerror = () => {
-        snackBar(`Network error occurred during XHR request`, `error`)
+        let updatedPost = {
+            userId: userIdControl.value,
+            title: titleControl.value,
+            body: bodyControl.value,
+            id: updateId
+        }
+    
+        let xhr = makeAPIcall('PATCH', update_url, updatedPost)
+    
+        xhr.onload = () => {
+            if(xhr.status >= 200 && xhr.status <= 299){
+                // let updatedPost = JSON.parse(xhr.response)
+                showUpdatedPost(updatedPost)
+            }else{
+                let msg = `Something went wrong while updating post...`
+                console.error(msg)
+                snackBar(msg, `error`)
+            }
+        }
+        
+        xhr.onerror = () => {
+            snackBar(`Network error occurred during XHR request`, `error`)
+        }
+    }else{
+        snackBar(`Input field can't be empty while updating...`, `warning`)
     }
 };
 
