@@ -1,13 +1,14 @@
 body{
-    background-color: rgb(0, 0, 0, 0.1);
-}
-
-.color-dark{
-    background-color: #f7d8ba;
+    background-color: #f5f5f5;
+    min-height: 100vh;
 }
 
 .color-light{
     background-color: #fef8dd;
+}
+
+.color-dark{
+    background-color: #f7d8ba;
 }
 
 .postHead h4{
@@ -23,7 +24,7 @@ body{
 }
 
 .loader{
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
