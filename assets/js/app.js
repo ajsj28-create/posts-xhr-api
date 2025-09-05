@@ -29,7 +29,7 @@ const snackBar = (msg, icon) => {
     })
 };
 
-const makeAPIcall = (method, url, body) => {
+const makeAPIcall = (method, url, body, callback) => {
     let xhr = new XMLHttpRequest()
     xhr.open(method, url)
     xhr.setRequestHeader('Authorization', 'JWT from LS')
@@ -42,7 +42,7 @@ const templating = (arr) => {
     let result = ``
     arr.forEach(obj => {
         result += `
-            <div class="col-lg-4 col-md-6 col-sm-12 mb-3" id="${obj.id}">
+            <div class="col-lg-4 col-md-6 mb-3" id="${obj.id}">
                 <div class="card h-100 postCard">
                     <div class="card-header postHead color-dark">
                         <h4 class="m-0">${obj.title}</h4>
@@ -82,7 +82,7 @@ const showNewPost = (obj) => {
 						<span>User ${obj.userId}</span>
                     </div>
             </div>`
-    newCol.className = `col-lg-4 col-md-6 col-sm-12 mb-3`
+    newCol.className = `col-lg-4 col-md-6 mb-3`
 
     newCol.id = localStorage.getItem('newId')
     localStorage.removeItem('newId')
